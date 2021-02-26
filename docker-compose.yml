@@ -1,40 +1,26 @@
-version: "3.1"
+version: '3.3'
 services:
-    www:
-        build: .
-        ports: 
-            - "8001:80"
-        volumes:
-            - ./www:/var/www/html/
-        links:
-            - db
-        networks:
-            - default
-    db:
-        image: mysql:8.0
-        ports: 
-            - "3306:3306"
-        command: --default-authentication-plugin=mysql_native_password
-        environment:
-            MYSQL_DATABASE: myDb
-            MYSQL_USER: user
-            MYSQL_PASSWORD: test
-            MYSQL_ROOT_PASSWORD: test 
-        volumes:
-            - ./dump:/docker-entrypoint-initdb.d
-            - ./conf:/etc/mysql/conf.d
-            - persistent:/var/lib/mysql
-        networks:
-            - default
-    phpmyadmin:
-        image: phpmyadmin/phpmyadmin
-        links: 
-            - db:db
-        ports:
-            - 8000:80
-        environment:
-            MYSQL_USER: user
-            MYSQL_PASSWORD: test
-            MYSQL_ROOT_PASSWORD: test 
+  mysql:
+    container_name: MySQL_Container
+    image: 'mysql:8.0'
+    ports:
+      - '3306:3306'
+    command: mysqld --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_DATABASE=somedbname
+      - MYSQL_USER=someusername
+      - MYSQL_ROOT_PASSWORD=somepassword
+      - MYSQL_ROOT_PASSWORD=somepasswordtoroot
+    volumes:
+      - type: bind
+        source: ./conf
+        target: /etc/mysql/conf.d' 
+      - type: bind
+        source: ./mysqldatapersist
+        target : /var/lib/mysql
+      # - 'persistent:/var/lib/mysql'
+      # - './conf:/etc/mysql/conf.d'
+    networks:
+      - default
 volumes:
-    persistent:
+  persistent: null
